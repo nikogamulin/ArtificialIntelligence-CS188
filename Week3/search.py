@@ -14,6 +14,7 @@ by Pacman agents (in searchAgents.py).
 """
 
 import util
+import copy
 
 class SearchProblem:
     """
@@ -78,13 +79,56 @@ def depthFirstSearch(problem):
 
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
+    """
 
     print "Start:", problem.getStartState()
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
-    """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    
+    reachedGoal=False
+    exploredAll=False
+    
+    priorityQueue = util.PriorityQueue()
+    exploredPaths = []
+    actionPlan = []
+    exploredNodes = []
+    startState=problem.getStartState()
+    priorityQueue.push([startState], 1)
+    while reachedGoal == False:
+        
+        #pick the item with highest priority from the queue
+        pathWithHighestPriority = priorityQueue.pop()
+        #check if path contains goal state
+        for node in pathWithHighestPriority:
+            reachedGoal = problem.isGoalState(node)
+            nodeAlreadyExplored = node in exploredNodes
+            if nodeAlreadyExplored == False:
+                exploredNodes.append(node)
+        
+        #if goal hasn't been reached keep searching
+        lastNode = pathWithHighestPriority[-1]
+        successorNodes = problem.getSuccessors(lastNode)
+        if len(successorNodes) > 0:
+            currentPath = []
+            currentPath.extend(pathWithHighestPriority)
+            nodeAdded = False
+            for currentNode in successorNodes:
+                currentNodeInExploredNodes = currentNode[0] in exploredNodes
+                if currentNodeInExploredNodes == False:
+                        currentPath.append(currentNode[0])
+                        nodeAdded = True
+                        break
+            #if node is added, continue exploring, else remove the path from the queue
+            #if nodeAdded == True:
+            if len(currentPath) > len(exploredNodes):
+                priorityQueue.push(currentPath, len(currentPath))
+        
+    
+  
+    
+    
+    #util.raiseNotDefined()
+    
 
 def breadthFirstSearch(problem):
     """
