@@ -137,12 +137,6 @@ def depthFirstSearch(problem):
             exploredPaths.append(pathWithHighestPriority)
             for currentPath in potentialPaths:
                 priorityQueue.push(currentPath, len(currentPath) * (-1))
-        
-    
-  
-    
-    
-    #util.raiseNotDefined()
     
 
 def breadthFirstSearch(problem):
