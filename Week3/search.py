@@ -96,14 +96,8 @@ def depthFirstSearch(problem):
     startState=problem.getStartState()
     priorityQueue.push([startState], -1)
     potentialPaths.append([startState])
+    
     while reachedGoal == False:
-        
-        #fill priority queue
-        #for path in potentialPaths:
-        #    pathAlreadyExplored = path in exploredPaths
-        #    if pathAlreadyExplored == False:
-        #        priorityQueue.push(path, len(path)*(-1))
-        #pick the item with highest priority from the queue
         pathWithHighestPriority = priorityQueue.pop()
         exploredNodes[:] = []
         actionPlan[:] = []
@@ -136,7 +130,6 @@ def depthFirstSearch(problem):
                 potentialPath = pathWithHighestPriority[:]
                 potentialPath.append(currentNode)
                 if nodesToExplore.index(currentNode) == 0:
-                    #priorityQueue.heap.remove(pathWithHighestPriority)
                     priorityQueue.push(potentialPath, len(potentialPath) * (-1))
                 else:
                     potentialPaths.append(potentialPath)
@@ -144,7 +137,6 @@ def depthFirstSearch(problem):
             exploredPaths.append(pathWithHighestPriority)
             for currentPath in potentialPaths:
                 priorityQueue.push(currentPath, len(currentPath) * (-1))
-                #priorityQueue.heap.remove(pathWithHighestPriority)
         
     
   
