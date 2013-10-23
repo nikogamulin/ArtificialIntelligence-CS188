@@ -90,38 +90,61 @@ def depthFirstSearch(problem):
     
     priorityQueue = util.PriorityQueue()
     exploredPaths = []
+    potentialPaths = []
     actionPlan = []
     exploredNodes = []
     startState=problem.getStartState()
-    priorityQueue.push([startState], 1)
+    priorityQueue.push([startState], -1)
+    potentialPaths.append([startState])
     while reachedGoal == False:
         
+        #fill priority queue
+        #for path in potentialPaths:
+        #    pathAlreadyExplored = path in exploredPaths
+        #    if pathAlreadyExplored == False:
+        #        priorityQueue.push(path, len(path)*(-1))
         #pick the item with highest priority from the queue
         pathWithHighestPriority = priorityQueue.pop()
+        exploredNodes[:] = []
+        actionPlan[:] = []
+        exploredNodes.append(startState)
         #check if path contains goal state
-        for node in pathWithHighestPriority:
-            reachedGoal = problem.isGoalState(node)
-            nodeAlreadyExplored = node in exploredNodes
-            if nodeAlreadyExplored == False:
-                exploredNodes.append(node)
+        iterPathWithHighestPriority = iter(pathWithHighestPriority)
+        next(iterPathWithHighestPriority)
+        for node in iterPathWithHighestPriority:
+            reachedGoal = problem.isGoalState(node[0])
+            actionPlan.append(node[1])
+            if reachedGoal == True:
+                #get action states
+                return actionPlan
+            exploredNodes.append(node[0])
         
         #if goal hasn't been reached keep searching
         lastNode = pathWithHighestPriority[-1]
-        successorNodes = problem.getSuccessors(lastNode)
-        if len(successorNodes) > 0:
-            currentPath = []
-            currentPath.extend(pathWithHighestPriority)
-            nodeAdded = False
-            for currentNode in successorNodes:
-                currentNodeInExploredNodes = currentNode[0] in exploredNodes
-                if currentNodeInExploredNodes == False:
-                        currentPath.append(currentNode[0])
-                        nodeAdded = True
-                        break
-            #if node is added, continue exploring, else remove the path from the queue
-            #if nodeAdded == True:
-            if len(currentPath) > len(exploredNodes):
-                priorityQueue.push(currentPath, len(currentPath))
+        if lastNode == startState:
+            successorNodes = problem.getSuccessors(lastNode)
+        else:
+            successorNodes = problem.getSuccessors(lastNode[0])
+        nodesToExplore = []
+        for currentNode in successorNodes:
+            currentNodeInExploredNodes = currentNode[0] in exploredNodes
+            #Don't allow to go backwards
+            if currentNodeInExploredNodes == False:
+                    nodesToExplore.append(currentNode)
+        if len(nodesToExplore) > 0:
+            for currentNode in nodesToExplore:
+                potentialPath = pathWithHighestPriority[:]
+                potentialPath.append(currentNode)
+                if nodesToExplore.index(currentNode) == 0:
+                    #priorityQueue.heap.remove(pathWithHighestPriority)
+                    priorityQueue.push(potentialPath, len(potentialPath) * (-1))
+                else:
+                    potentialPaths.append(potentialPath)
+        else:
+            exploredPaths.append(pathWithHighestPriority)
+            for currentPath in potentialPaths:
+                priorityQueue.push(currentPath, len(currentPath) * (-1))
+                #priorityQueue.heap.remove(pathWithHighestPriority)
         
     
   
