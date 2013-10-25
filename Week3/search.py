@@ -88,62 +88,24 @@ def depthFirstSearch(problem):
     
 
 def breadthFirstSearch(problem):
-    """
-    Search the shallowest nodes in the search tree first.
-    """
-    "*** YOUR CODE HERE ***"
     
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
-    
-    reachedGoal=False
-    exploredAll=False
-    
-    priorityQueue = util.PriorityQueue()
-    exploredPaths = []
-    potentialPaths = []
-    actionPlan = []
     exploredNodes = []
+    fringe = util.PriorityQueue()
     startState=problem.getStartState()
-    priorityQueue.push([startState], 1)
-    potentialPaths.append([startState])
+    fringe.push((startState, []), 1)
+    exploredNodes.append(startState)
     
-    while reachedGoal == False:
-        pathWithHighestPriority = priorityQueue.pop()
-        exploredNodes[:] = []
-        actionPlan[:] = []
-        exploredNodes.append(startState)
-        #check if path contains goal state
-        iterPathWithHighestPriority = iter(pathWithHighestPriority)
-        next(iterPathWithHighestPriority)
-        for node in iterPathWithHighestPriority:
-            reachedGoal = problem.isGoalState(node[0])
-            actionPlan.append(node[1])
-            if reachedGoal == True:
-                #get action states
-                return actionPlan
-            exploredNodes.append(node[0])
+    while not fringe.isEmpty():
+        node, actions = fringe.pop()
+        if problem.isGoalState(node):
+            return actions
+        for coord, direction, steps in problem.getSuccessors(node):
+            if not coord in exploredNodes:
+                fringe.push((coord, actions + [direction]), len(actions) + 1)
+                exploredNodes.append(coord)
         
-        #if goal hasn't been reached keep searching
-        lastNode = pathWithHighestPriority[-1]
-        if lastNode == startState:
-            successorNodes = problem.getSuccessors(lastNode)
-        else:
-            successorNodes = problem.getSuccessors(lastNode[0])
-        nodesToExplore = []
-        for currentNode in successorNodes:
-            currentNodeInExploredNodes = currentNode[0] in exploredNodes
-            #Don't allow to go backwards
-            if currentNodeInExploredNodes == False:
-                    nodesToExplore.append(currentNode)
-        if len(nodesToExplore) > 0:
-            for currentNode in nodesToExplore:
-                potentialPath = pathWithHighestPriority[:]
-                potentialPath.append(currentNode)
-                priorityQueue.push(potentialPath, len(potentialPath))
-        else:
-            exploredPaths.append(pathWithHighestPriority)
+        
+        
 
 def uniformCostSearch(problem):
     "Search the node of least total cost first. "
