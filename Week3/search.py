@@ -122,9 +122,9 @@ def uniformCostSearch(problem):
         exploredNodes.append(node)
         for coord, direction, steps in problem.getSuccessors(node):
             if not coord in exploredNodes:
-                nextActions = actions + [direction]
-                nextActionsCost = problem.getCostOfActions(nextActions) * (-1)
-                fringe.push((coord, actions + [direction]), nextActionsCost)
+                newActions = actions + [direction]
+                newActionsCost = problem.getCostOfActions(newActions) * (-1)
+                fringe.push((coord, actions + [direction]), newActionsCost)
                 exploredNodes.append(coord)
                 
     return[]
@@ -137,9 +137,24 @@ def nullHeuristic(state, problem=None):
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    "Search the node that has the lowest combined cost and heuristic first."
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    
+    closedSet = []
+    fringe = util.PriorityQueue()
+    start = problem.getStartState()
+    fringe.push((start, []), heuristic(start, problem))
+    
+    while not fringe.isEmpty():
+        node, actions = fringe.pop()
+        
+        if problem.isGoalState(node):
+            return actions
+        closedSet.append(node)
+        
+        for coord, direction, cost in problem.getSuccessors(node):
+            if not coord in closedSet:
+                newActions = actions + [direction]
+                score = problem.getCostOfActions(newActions) + heuristic(coord, problem)
+                fringe.push((coord, newActions), score)
 
 
 # Abbreviations
