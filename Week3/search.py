@@ -108,62 +108,26 @@ def breadthFirstSearch(problem):
         
 
 def uniformCostSearch(problem):
-    "Search the node of least total cost first. "
-    "*** YOUR CODE HERE ***"
     
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
-    
-    reachedGoal=False
-    exploredAll=False
-    
-    fringe = util.PriorityQueue()
-    exploredPaths = []
-    potentialPaths = []
-    actionPlan = []
     exploredNodes = []
+    fringe = util.PriorityQueue()
     startState=problem.getStartState()
-    fringe.push(([startState], []), 0)
+    fringe.push((startState, []), 1)
+    #exploredNodes.append(startState)
     
-    while reachedGoal == False:
-        pathWithHighestPriority, actions = fringe.pop()
-        exploredNodes[:] = []
-        actionPlan[:] = []
-        exploredNodes.append(startState)
-        #check if path contains goal state
-        iterPathWithHighestPriority = iter(pathWithHighestPriority)
-        next(iterPathWithHighestPriority)
-        for node in iterPathWithHighestPriority:
-            reachedGoal = problem.isGoalState(node[0])
-            actionPlan.append(node[1])
-            if reachedGoal == True:
-                #get action states
-                return actionPlan
-            exploredNodes.append(node[0])
-        
-        #if goal hasn't been reached keep searching
-        lastNode = pathWithHighestPriority[-1]
-        if lastNode == startState:
-            successorNodes = problem.getSuccessors(lastNode)
-        else:
-            successorNodes = problem.getSuccessors(lastNode[0])
-        nodesToExplore = []
-        for currentNode in successorNodes:
-            currentNodeInExploredNodes = currentNode[0] in exploredNodes
-            #Don't allow to go backwards
-            if currentNodeInExploredNodes == False:
-                    nodesToExplore.append(currentNode)
-        if len(nodesToExplore) > 0:
-            for currentNode in nodesToExplore:
-                direction = currentNode[1]
-                newActions = actions + [direction]
-                actionCost = problem.getCostOfActions(newActions)
-                potentialPath = pathWithHighestPriority[:]
-                potentialPath.append(currentNode)
-                fringe.push(potentialPath, len(potentialPath))
-        else:
-            exploredPaths.append(pathWithHighestPriority)
+    while not fringe.isEmpty():
+        node, actions = fringe.pop()
+        if problem.isGoalState(node):
+            return actions
+        exploredNodes.append(node)
+        for coord, direction, steps in problem.getSuccessors(node):
+            if not coord in exploredNodes:
+                nextActions = actions + [direction]
+                nextActionsCost = problem.getCostOfActions(nextActions) * (-1)
+                fringe.push((coord, actions + [direction]), nextActionsCost)
+                exploredNodes.append(coord)
+                
+    return[]
 
 def nullHeuristic(state, problem=None):
     """
