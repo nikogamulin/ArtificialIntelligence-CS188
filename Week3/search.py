@@ -123,7 +123,7 @@ def uniformCostSearch(problem):
         for coord, direction, steps in problem.getSuccessors(node):
             if not coord in exploredNodes:
                 newActions = actions + [direction]
-                newActionsCost = problem.getCostOfActions(newActions) * (-1)
+                newActionsCost = problem.getCostOfActions(newActions)
                 fringe.push((coord, actions + [direction]), newActionsCost)
                 exploredNodes.append(coord)
                 
