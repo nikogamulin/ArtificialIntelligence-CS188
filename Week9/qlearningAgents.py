@@ -195,7 +195,8 @@ class ApproximateQAgent(PacmanQAgent):
         #return PacmanQAgent.getQValue(self,state,action)
         features = self.featExtractor.getFeatures(state,action)
         #print features.keys()
-        return sum([self.weights[key] * features[key] for key in features.keys() ])
+        qValue = sum([self.weights[key] * features[key] for key in features.keys() ])
+        return qValue
 
     def update(self, state, action, nextState, reward):
         """
